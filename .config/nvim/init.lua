@@ -10,8 +10,8 @@ vim.opt.rtp:prepend(lazypath)
 vim.opt.laststatus = 3
 vim.opt.list = true
 vim.opt.number = true
-vim.opt.shiftwidth = 3
-vim.opt.tabstop = 3
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
 vim.opt.showtabline = 2
 vim.opt.termguicolors = true
 vim.opt.wrap = false
@@ -101,7 +101,9 @@ require 'lazy'.setup({
 			capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 			local lspconfig = require 'lspconfig'
+			lspconfig.astro.setup {}
 			lspconfig.bashls.setup {}
+			lspconfig.biome.setup {}
 			lspconfig.clangd.setup {}
 			lspconfig.cmake.setup {}
 			lspconfig.cssls.setup { capabilities = capabilities }
