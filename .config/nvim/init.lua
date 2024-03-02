@@ -39,7 +39,8 @@ require 'lazy'.setup({
 				dim_inactive = { enabled = true },
 				integrations = {
 					aerial = true,
-					mason = true
+					fidget = true,
+					mason = true,
 				}
 			}
 			vim.cmd.colorscheme 'catppuccin'
@@ -52,10 +53,11 @@ require 'lazy'.setup({
 			require 'nvim-treesitter.configs'.setup {
 				auto_install = true,
 				autotag = { enable = true },
+				ensure_installed = 'all',
 				highlight = {
 					enable = true,
 					disable = function(lang, buf)
-						local max_filesize = 500 * 1024
+						local max_filesize = 222 * 1024
 						local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
 						if ok and stats and stats.size > max_filesize then
 							return true
@@ -68,8 +70,8 @@ require 'lazy'.setup({
 					navigation = {
 						enable = true,
 						keymaps = {
-							goto_next_usage = "<a-*>",
-							goto_previous_usage = "<a-#>",
+							goto_next_usage = '<a-*>',
+							goto_previous_usage = '<a-#>',
 						},
 					},
 				},
@@ -77,7 +79,6 @@ require 'lazy'.setup({
 		end,
 		dependencies = { 'nvim-treesitter/nvim-treesitter-refactor', 'windwp/nvim-ts-autotag' }
 	},
-	{ 'numToStr/Comment.nvim', config = true },
 	{
 		'stevearc/aerial.nvim',
 		config = function()
@@ -91,6 +92,16 @@ require 'lazy'.setup({
 		end,
 		dependencies = {
 			'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons'
+		},
+	},
+	{ 'numToStr/Comment.nvim', config = true },
+	{
+		'j-hui/fidget.nvim',
+		opts = {
+			notification = {
+				override_vim_notify = true,
+				window = { winblend = 0 },
+			},
 		},
 	},
 	{ 'folke/neodev.nvim',     config = true },
@@ -169,6 +180,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
 		local opts = { buffer = ev.buf }
 		vim.keymap.set('n', '<leader>g', '<cmd>tab split | lua vim.lsp.buf.definition()<CR>', opts)
+		--
 		vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
 		vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
 		vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
