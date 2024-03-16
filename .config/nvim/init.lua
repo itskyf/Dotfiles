@@ -94,7 +94,7 @@ require 'lazy'.setup({
 			'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons'
 		},
 	},
-	{ 'numToStr/Comment.nvim', config = true },
+	{ 'numToStr/Comment.nvim',       config = true },
 	{
 		'j-hui/fidget.nvim',
 		opts = {
@@ -104,7 +104,8 @@ require 'lazy'.setup({
 			},
 		},
 	},
-	{ 'folke/neodev.nvim',     config = true },
+	{ 'folke/neodev.nvim',           config = true },
+	{ 'andrewferrier/wrapping.nvim', config = true },
 	{
 		'neovim/nvim-lspconfig',
 		config = function()
@@ -122,6 +123,7 @@ require 'lazy'.setup({
 			lspconfig.dockerls.setup {}
 			lspconfig.eslint.setup {}
 			lspconfig.gradle_ls.setup {}
+			lspconfig.grammarly.setup {}
 			lspconfig.html.setup { capabilities = capabilities }
 			lspconfig.jsonls.setup { capabilities = capabilities }
 			lspconfig.lua_ls.setup {}
@@ -162,7 +164,7 @@ require 'lazy'.setup({
 			vim.keymap.set('n', '<leader>fr', fzf_lua.resume, opts)
 			vim.keymap.set('n', '<leader>fw', fzf_lua.grep_cWORD, opts)
 		end
-	}
+	},
 }, {
 	install = { colorscheme = { 'catppuccin' } },
 	checker = { enabled = true }
