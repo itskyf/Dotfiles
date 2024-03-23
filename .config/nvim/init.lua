@@ -31,6 +31,7 @@ vim.opt.relativenumber = true
 
 require 'lazy'.setup({
 	{
+		-- Theme
 		'catppuccin/nvim',
 		name = 'catppuccin',
 		priority = 1000,
@@ -77,9 +78,14 @@ require 'lazy'.setup({
 				},
 			}
 		end,
-		dependencies = { 'nvim-treesitter/nvim-treesitter-refactor', 'windwp/nvim-ts-autotag' }
+		dependencies = {
+			-- Highlight definitions, Navigation
+			'nvim-treesitter/nvim-treesitter-refactor',
+			'windwp/nvim-ts-autotag'
+		},
 	},
 	{
+		-- Outline
 		'stevearc/aerial.nvim',
 		config = function()
 			require 'aerial'.setup {
@@ -94,8 +100,18 @@ require 'lazy'.setup({
 			'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons'
 		},
 	},
-	{ 'numToStr/Comment.nvim',       config = true },
 	{
+		-- Winbar LSP context
+		'utilyre/barbecue.nvim',
+		config = true,
+		dependencies = { 'SmiteshP/nvim-navic', 'nvim-tree/nvim-web-devicons' },
+	},
+	{
+		'numToStr/Comment.nvim',
+		config = true
+	},
+	{
+		-- Notifications and LSP progress
 		'j-hui/fidget.nvim',
 		opts = {
 			notification = {
@@ -104,8 +120,10 @@ require 'lazy'.setup({
 			},
 		},
 	},
-	{ 'folke/neodev.nvim',           config = true },
-	{ 'andrewferrier/wrapping.nvim', config = true },
+	{ 'folke/neodev.nvim', config = true },
+	{
+		'andrewferrier/wrapping.nvim', config = true
+	},
 	{
 		'neovim/nvim-lspconfig',
 		config = function()
