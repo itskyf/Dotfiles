@@ -1,11 +1,21 @@
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
-if not vim.loop.fs_stat(lazypath) then
-	vim.fn.system {
-		'git', 'clone', '--filter=blob:none', 'https://github.com/folke/lazy.nvim.git',
-		lazypath
-	}
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+	local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
+	local out = vim.fn.system({ 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath })
+	if vim.v.shell_error ~= 0 then
+		vim.api.nvim_echo({
+			{ 'Failed to clone lazy.nvim:\n', 'ErrorMsg' },
+			{ out,                            'WarningMsg' },
+			{ '\nPress any key to exit...' },
+		}, true, {})
+		vim.fn.getchar()
+		os.exit(1)
+	end
 end
 vim.opt.rtp:prepend(lazypath)
+
+vim.g.mapleader = ' '
+vim.g.maplocalleader = '\\'
 
 vim.opt.laststatus = 3
 vim.opt.list = true
@@ -71,6 +81,7 @@ require 'lazy'.setup({
 					navigation = {
 						enable = true,
 						keymaps = {
+							goto_definition = 'gnd',
 							goto_next_usage = '<a-*>',
 							goto_previous_usage = '<a-#>',
 						},
@@ -107,8 +118,7 @@ require 'lazy'.setup({
 		dependencies = { 'SmiteshP/nvim-navic', 'nvim-tree/nvim-web-devicons' },
 	},
 	{
-		'numToStr/Comment.nvim',
-		config = true
+		'numToStr/Comment.nvim', config = true
 	},
 	{
 		-- Notifications and LSP progress
@@ -120,7 +130,6 @@ require 'lazy'.setup({
 			},
 		},
 	},
-	{ 'folke/neodev.nvim', config = true },
 	{
 		'andrewferrier/wrapping.nvim', config = true
 	},
@@ -144,13 +153,51 @@ require 'lazy'.setup({
 			lspconfig.grammarly.setup {}
 			lspconfig.html.setup { capabilities = capabilities }
 			lspconfig.jsonls.setup { capabilities = capabilities }
-			lspconfig.lua_ls.setup {}
+			lspconfig.lua_ls.setup {
+				on_init = function(client)
+					if client.workspace_folders then
+						local path = client.workspace_folders[1].name
+						if vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc') then
+							return
+						end
+					end
+
+					client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+						runtime = {
+							-- Tell the language server which version of Lua you're using
+							-- (most likely LuaJIT in the case of Neovim)
+							version = 'LuaJIT'
+						},
+						-- Make the server aware of Neovim runtime files
+						workspace = {
+							checkThirdParty = false,
+							library = { vim.env.VIMRUNTIME }
+						}
+					})
+				end,
+				settings = {
+					Lua = {}
+				}
+			}
 			lspconfig.marksman.setup {}
-			lspconfig.pyright.setup {}
-			lspconfig.ruff_lsp.setup {}
+			lspconfig.pyright.setup {
+				settings = {
+					pyright = {
+						-- Using Ruff's import organizer
+						disableOrganizeImports = true,
+					},
+					python = {
+						analysis = {
+							-- Ignore all files for analysis to exclusively use Ruff for linting
+							ignore = { '*' },
+						},
+					},
+				},
+			}
+			lspconfig.ruff.setup {}
 			lspconfig.svelte.setup {}
 			lspconfig.taplo.setup {}
-			lspconfig.tsserver.setup {}
+			lspconfig.ts_ls.setup {}
 			lspconfig.yamlls.setup {}
 		end,
 		dependencies = {
@@ -171,7 +218,6 @@ require 'lazy'.setup({
 	},
 	{
 		'ibhagwan/fzf-lua',
-		dependencies = { 'nvim-tree/nvim-web-devicons' },
 		config = function()
 			local fzf_lua = require 'fzf-lua'
 			fzf_lua.setup { 'fzf-native' }
@@ -181,40 +227,24 @@ require 'lazy'.setup({
 			vim.keymap.set('n', '<leader>fg', fzf_lua.live_grep_native, opts)
 			vim.keymap.set('n', '<leader>fr', fzf_lua.resume, opts)
 			vim.keymap.set('n', '<leader>fw', fzf_lua.grep_cWORD, opts)
-		end
+		end,
+		dependencies = { 'nvim-tree/nvim-web-devicons' },
 	},
 }, {
 	install = { colorscheme = { 'catppuccin' } },
 	checker = { enabled = true }
 })
 
-vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
-
-vim.api.nvim_create_autocmd('LspAttach', {
-	group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-	callback = function(ev)
-		vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
-
-		local opts = { buffer = ev.buf }
-		vim.keymap.set('n', '<leader>g', '<cmd>tab split | lua vim.lsp.buf.definition()<CR>', opts)
-		--
-		vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-		vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-		vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-		vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-		vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-		vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
-		vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
-		vim.keymap.set('n', '<space>wl', function()
-			print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-		end, opts)
-		vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
-		vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
-		vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
-		vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-		vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, opts)
+vim.api.nvim_create_autocmd("LspAttach", {
+	callback = function(args)
+		local client = vim.lsp.get_client_by_id(args.data.client_id)
+		if client == nil then
+			return
+		end
+		if client.name == 'ruff' then
+			-- Disable hover in favor of Pyright
+			client.server_capabilities.hoverProvider = false
+		end
 	end,
+	desc = 'LSP: Disable hover capability from Ruff',
 })
