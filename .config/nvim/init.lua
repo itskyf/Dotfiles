@@ -232,7 +232,7 @@ require 'lazy'.setup({
 	checker = { enabled = true }
 })
 
-vim.api.nvim_create_autocmd("LspAttach", {
+vim.api.nvim_create_autocmd('LspAttach', {
 	callback = function(args)
 		local client = vim.lsp.get_client_by_id(args.data.client_id)
 		if client == nil then
@@ -242,6 +242,16 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			-- Disable hover in favor of Pyright
 			client.server_capabilities.hoverProvider = false
 		end
+		if client.name == 'yamlls' then
+			client.server_capabilities.documentFormattingProvider = true
+		end
 	end,
-	desc = 'LSP: Disable hover capability from Ruff',
+})
+
+vim.api.nvim_create_autocmd('VimEnter', {
+	callback = function()
+		if require 'lazy.status'.has_updates then
+			require 'lazy'.update({ show = false, })
+		end
+	end,
 })
