@@ -218,12 +218,12 @@ require 'lazy'.setup({
 		config = function()
 			local fzf_lua = require 'fzf-lua'
 			fzf_lua.setup { 'fzf-native' }
-			local opts = { silent = true }
-			vim.keymap.set({ 'n', 'v', 'i' }, '<C-x><C-f>', fzf_lua.complete_path, opts)
-			vim.keymap.set('n', '<leader>ff', fzf_lua.files, opts)
-			vim.keymap.set('n', '<leader>fg', fzf_lua.live_grep_native, opts)
-			vim.keymap.set('n', '<leader>fr', fzf_lua.resume, opts)
-			vim.keymap.set('n', '<leader>fw', fzf_lua.grep_cWORD, opts)
+
+			vim.keymap.set('n', '<C-\\>', fzf_lua.buffers, {})
+			vim.keymap.set('n', '<C-k>', fzf_lua.builtin, {})
+			vim.keymap.set('n', '<C-p>', fzf_lua.files, {})
+			vim.keymap.set('n', '<C-l>', fzf_lua.live_grep_glob, {})
+			-- vim.keymap.set('n', '<C-g>', fzf_lua.grep_project, {})
 		end,
 		dependencies = { 'nvim-tree/nvim-web-devicons' },
 	},
@@ -238,11 +238,11 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		if client == nil then
 			return
 		end
+
 		if client.name == 'ruff' then
 			-- Disable hover in favor of Pyright
 			client.server_capabilities.hoverProvider = false
-		end
-		if client.name == 'yamlls' then
+		elseif client.name == 'yamlls' then
 			client.server_capabilities.documentFormattingProvider = true
 		end
 	end,
