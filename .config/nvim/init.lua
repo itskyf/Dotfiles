@@ -38,7 +38,6 @@ vim.opt.relativenumber = true
 
 require 'lazy'.setup({
 	{
-		-- Theme
 		'catppuccin/nvim',
 		name = 'catppuccin',
 		priority = 1000,
@@ -93,7 +92,6 @@ require 'lazy'.setup({
 		},
 	},
 	{
-		-- Outline
 		'stevearc/aerial.nvim',
 		config = function()
 			require 'aerial'.setup {
@@ -109,7 +107,6 @@ require 'lazy'.setup({
 		},
 	},
 	{
-		-- Winbar LSP context
 		'utilyre/barbecue.nvim',
 		config = true,
 		dependencies = { 'SmiteshP/nvim-navic', 'nvim-tree/nvim-web-devicons' },
@@ -118,7 +115,6 @@ require 'lazy'.setup({
 		'numToStr/Comment.nvim', config = true
 	},
 	{
-		-- Notifications and LSP progress
 		'j-hui/fidget.nvim',
 		opts = {
 			notification = {
@@ -154,7 +150,7 @@ require 'lazy'.setup({
 				on_init = function(client)
 					if client.workspace_folders then
 						local path = client.workspace_folders[1].name
-						if vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc') then
+						if vim.loop.fs_stat(path .. '/.luarc.json') or vim.loop.fs_stat(path .. '/.luarc.jsonc') then
 							return
 						end
 					end
@@ -194,6 +190,7 @@ require 'lazy'.setup({
 			lspconfig.ruff.setup {}
 			lspconfig.svelte.setup {}
 			lspconfig.taplo.setup {}
+			lspconfig.tinymist.setup {}
 			lspconfig.ts_ls.setup {}
 			lspconfig.yamlls.setup {}
 		end,
@@ -223,10 +220,16 @@ require 'lazy'.setup({
 			vim.keymap.set('n', '<C-k>', fzf_lua.builtin, {})
 			vim.keymap.set('n', '<C-p>', fzf_lua.files, {})
 			vim.keymap.set('n', '<C-l>', fzf_lua.live_grep_glob, {})
-			-- vim.keymap.set('n', '<C-g>', fzf_lua.grep_project, {})
+			-- vim.keymap.set('n', '<C-g>', fzf_lua.grep_project, {}) # Use default keymap for the filename
 		end,
 		dependencies = { 'nvim-tree/nvim-web-devicons' },
 	},
+	{
+		'chomosuke/typst-preview.nvim',
+		opts = {
+			dependencies_bin = { ['tinymist'] = 'tinymist' }
+		}
+	}
 }, {
 	install = { colorscheme = { 'catppuccin' } },
 	checker = { enabled = true }
