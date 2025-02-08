@@ -190,7 +190,11 @@ require 'lazy'.setup({
 			lspconfig.ruff.setup {}
 			lspconfig.svelte.setup {}
 			lspconfig.taplo.setup {}
-			lspconfig.tinymist.setup {}
+			lspconfig.tinymist.setup {
+				settings = {
+					formatterMode = "typstyle",
+				}
+			}
 			lspconfig.ts_ls.setup {}
 			lspconfig.yamlls.setup {}
 		end,
