@@ -1,5 +1,5 @@
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
 	local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
 	local out = vim.fn.system({ 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath })
 	if vim.v.shell_error ~= 0 then
@@ -14,27 +14,35 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-vim.opt.laststatus = 3
-vim.opt.list = true
-vim.opt.number = true
-vim.opt.shiftwidth = 2
-vim.opt.tabstop = 2
-vim.opt.showtabline = 2
-vim.opt.termguicolors = true
-vim.opt.wrap = false
-vim.opt.updatetime = 222
---
-vim.opt.scrolloff = 4
-vim.opt.sidescrolloff = 4
-vim.opt.splitbelow = true
-vim.opt.splitright = true
---
-vim.opt.cindent = true
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
---
-vim.opt.cursorline = true
-vim.opt.relativenumber = true
+-- UI & Appearance Settings
+vim.opt.laststatus = 3        -- Always show a global status line
+vim.opt.list = true           -- Show hidden characters
+vim.opt.number = true         -- Show line numbers
+vim.opt.relativenumber = true -- Show relative line numbers
+vim.opt.showtabline = 2       -- Always show the tab line
+vim.opt.termguicolors = true  -- Enable 24-bit RGB colors
+vim.opt.wrap = false          -- Disable line wrapping
+vim.opt.cursorline = true     -- Highlight the current line
+
+-- Indentation & Formatting
+vim.opt.shiftwidth = 2 -- Indentation width (2 spaces)
+vim.opt.tabstop = 2    -- Tab width (2 spaces)
+vim.opt.cindent = true -- Enable C-style indentation
+
+-- Scrolling & Viewport Behavior
+vim.opt.scrolloff = 4     -- Keep 4 lines above/below cursor when scrolling
+vim.opt.sidescrolloff = 4 -- Keep 4 columns to the left/right when scrolling
+
+-- Splitting Behavior
+vim.opt.splitbelow = true -- New horizontal splits appear below
+vim.opt.splitright = true -- New vertical splits appear to the right
+
+-- Search Behavior
+vim.opt.ignorecase = true -- Case-insensitive search
+vim.opt.smartcase = true  -- Case-sensitive if uppercase letters are used in search
+
+-- Performance Optimization
+vim.opt.updatetime = 222 -- Reduce time before writing swap file and triggering events
 
 require 'lazy'.setup({
 	{
@@ -65,7 +73,7 @@ require 'lazy'.setup({
 					enable = true,
 					disable = function(lang, buf)
 						local max_filesize = 222 * 1024
-						local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+						local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
 						if ok and stats and stats.size > max_filesize then
 							return true
 						end
@@ -150,7 +158,7 @@ require 'lazy'.setup({
 				on_init = function(client)
 					if client.workspace_folders then
 						local path = client.workspace_folders[1].name
-						if vim.loop.fs_stat(path .. '/.luarc.json') or vim.loop.fs_stat(path .. '/.luarc.jsonc') then
+						if vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc') then
 							return
 						end
 					end
