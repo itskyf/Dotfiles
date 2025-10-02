@@ -1,9 +1,9 @@
 {
-    "awsAuthRefresh": "aws sso login",
-    "env": {
-        "ANTHROPIC_MODEL": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
-        "AWS_REGION": "ap-southeast-1",
-        "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
-        "CLAUDE_CODE_USE_BEDROCK": "1"
-    }
+	"awsAuthRefresh": "aws sso login --profile ais-dev-admin",
+	"env": {
+		"ANTHROPIC_MODEL": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+		"AWS_PROFILE": "ais-dev-admin",
+		"CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+		"CLAUDE_CODE_USE_BEDROCK": "1"
+	}
 }

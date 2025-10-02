@@ -1,0 +1,7 @@
+[model_providers.mlx-omni-server]
+name = "MLX Omni Server"
+base_url = "http://localhost:10240/v1"
+
+[profiles.mlx-omni-server]
+model = "mlx-community/Qwen3-Coder-30B-A3B-Instruct-4bit-dwq-v2"
+model_provider = "mlx-omni-server"

@@ -1,3 +1,8 @@
 {
-    "contextFileName": "AGENTS.md"
+	"contextFileName": "AGENTS.md",
+	"security": {
+		"auth": {
+			"selectedType": "oauth-personal"
+		}
+	}
 }
