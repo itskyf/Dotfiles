@@ -1,0 +1,14 @@
+[workspace]
+authors = ["Kỳ <40734986+itskyf@users.noreply.github.com>"]
+channels = ["conda-forge"]
+name = "serving"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[activation.env]
+OLLAMA_FLASH_ATTENTION = "1"
+
+[tasks]
+
+[dependencies]
+ollama = ">=0.12.2,<0.13"
