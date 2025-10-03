@@ -1,2 +1,4 @@
 [tools]
 prek = "latest"
+shellcheck = "latest"
+shfmt = "latest"
