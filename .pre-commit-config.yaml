@@ -1,19 +1,19 @@
 repos:
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: "0.8.22"
+    rev: 0.9.4
     hooks:
       - id: uv-lock
   - repo: https://github.com/biomejs/pre-commit
-    rev: v2.2.4
+    rev: v2.2.6
     hooks:
       - id: biome-check
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.13.2
+    rev: v0.14.1
     hooks:
       - id: ruff-check
       - id: ruff-format
   - repo: https://github.com/crate-ci/typos
-    rev: v1.37.1
+    rev: v1.38.1
     hooks:
       - id: typos
         args: []
